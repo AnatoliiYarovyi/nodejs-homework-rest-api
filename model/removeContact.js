@@ -10,7 +10,7 @@ async function removeContact(contactId) {
     }
     const newContacts = contacts.filter(({ id }) => id != contactId)
     await update(newContacts)
-    return newContacts
+    return contacts[idx]
   } catch (error) {
     console.error(error)
     throw error
