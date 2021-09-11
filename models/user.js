@@ -4,45 +4,41 @@ const Joi = require('joi')
 const emailRegexp =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-const contactSchema = Schema(
+const userSchema = Schema(
   {
-    name: {
+    password: {
       type: String,
-      required: [true, 'Еnter a name'],
+      required: [true, 'Password is required'],
     },
     email: {
       type: String,
       match: emailRegexp,
       required: [true, 'Еnter an email'],
+      unique: true,
     },
-    phone: {
+    subscription: {
       type: String,
-      minlength: 1,
-      maxlength: 20,
-      required: [true, 'Еnter a phone'],
+      enum: ['starter', 'pro', 'business'],
+      default: 'starter',
     },
-    favorite: {
-      type: Boolean,
-      default: false,
-    },
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: 'user',
+    token: {
+      type: String,
+      default: null,
     },
   },
   { versionKey: false, timestamps: true },
 )
 
-const Contact = model('contact', contactSchema)
-
-const joiContactSchema = Joi.object({
-  name: Joi.string().required(),
+const joiUserSchema = Joi.object({
+  password: Joi.string().required(),
   email: Joi.string().pattern(emailRegexp).required(),
-  phone: Joi.string().required(),
-  favorite: Joi.boolean(),
+  subscription: Joi.string(),
+  token: Joi.string(),
 })
 
+const User = model('user', userSchema)
+
 module.exports = {
-  joiContactSchema,
-  Contact,
+  joiUserSchema,
+  User,
 }
